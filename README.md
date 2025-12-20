@@ -91,6 +91,8 @@ python manage.py send_drink_reminder
 ```
 drink_reminder/          # 主项目目录
 ├── config.py           # 配置文件
+├── deploy_and_run.sh   # 一键部署和启动脚本
+├── start_system.sh     # 日常启动脚本
 ├── manage.py           # Django 管理脚本
 ├── requirements.txt    # 依赖列表
 ├── drink_reminder/     # Django 配置目录
@@ -111,6 +113,35 @@ drink_reminder/          # 主项目目录
     ├── templates/      # 模板文件
     └── static/         # 静态文件
 ```
+
+## 快速部署和启动
+
+### 一键部署和启动（首次部署或完整更新）
+
+```bash
+# 从GitHub克隆并部署项目
+git clone git@github.com:chenzhiyan/drinkWater.git
+cd drinkWater
+./deploy_and_run.sh
+```
+
+### 日常启动（部署后）
+
+```bash
+# 启动已部署的系统（检查服务状态并启动未运行的服务）
+./start_system.sh
+```
+
+## 配置说明
+
+编辑 `config.py` 文件配置Server酱推送：
+
+1. `SERVER_CHAN_TOKEN`: Server酱的SCKEY
+2. `DRINK_REMINDER_MESSAGES`: 一个包含多条提醒消息的列表，系统会随机选择一条发送
+3. 智能时间调度：
+   - 上午：9:00 - 11:50，随机间隔45-60分钟发送提醒
+   - 下午：14:00 - 17:30，随机间隔45-60分钟发送提醒
+   - 其他时间不发送提醒
 
 ## Redis 配置
 
