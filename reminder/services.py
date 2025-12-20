@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 def send_server_chan_notification(title=None, message=None):
     """
-    Send notification via ServerChan (serverchan.com)
+    Send notification via ServerChan3 (sc3.ft07.com)
     
     Args:
         title (str): Notification title, defaults to configured title
@@ -25,12 +25,12 @@ def send_server_chan_notification(title=None, message=None):
     title = title or DRINK_REMINDER_TITLE
     message = message or random.choice(DRINK_REMINDER_MESSAGES)  # Randomly select a message
     
-    # ServerChan API endpoint (using the newer version)
-    url = f"https://sctapi.ftqq.com/{SERVER_CHAN_TOKEN}.send"
+    # Server酱3 API endpoint
+    url = f"https://sc3.ft07.com/send/{SERVER_CHAN_TOKEN}"
     
     payload = {
         'title': title,
-        'desp': message  # ServerChan uses 'desp' for description/content
+        'desp': message  # Server酱 uses 'desp' for description/content
     }
     
     try:
@@ -38,20 +38,20 @@ def send_server_chan_notification(title=None, message=None):
         response.raise_for_status()
         
         result = response.json()
-        logger.info(f"ServerChan notification sent: {result}")
+        logger.info(f"ServerChan3 notification sent: {result}")
         
         # Check if the request was successful
-        if result.get('data'):
+        if ('code' in result and result['code'] == 0) or 'success' in str(result).lower():
             return {"success": True, "result": result}
         else:
-            logger.error(f"ServerChan notification failed: {result}")
+            logger.error(f"ServerChan3 notification failed: {result}")
             return {"success": False, "error": result}
             
     except requests.exceptions.RequestException as e:
-        logger.error(f"Error sending ServerChan notification: {str(e)}")
+        logger.error(f"Error sending ServerChan3 notification: {str(e)}")
         return {"success": False, "error": str(e)}
     except ValueError as e:  # Includes JSON decode errors
-        logger.error(f"Error parsing ServerChan response: {str(e)}")
+        logger.error(f"Error parsing ServerChan3 response: {str(e)}")
         return {"success": False, "error": str(e)}
 
 def send_drink_reminder():
