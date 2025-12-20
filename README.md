@@ -5,9 +5,11 @@
 ## 功能特性
 
 - 每隔指定时间自动发送喝水提醒
-- 支持手动发送测试通知
+- 支持手动发送测试通知  
 - 系统状态监控页面
 - 使用 Server酱 进行消息推送
+- 多种随机提醒消息（从预设列表中随机选择）
+- 智能时间调度（上午9:00-11:50和下午14:00-17:30，随机间隔45-60分钟）
 
 ## 部署说明
 
@@ -32,8 +34,11 @@ pip install -r requirements.txt
    ```python
    SERVER_CHAN_TOKEN = "YOUR_SCKEY_HERE"  # 替换为你的 SCKEY
    DRINK_REMINDER_TITLE = "喝水提醒"      # 提醒标题
-   DRINK_REMINDER_MESSAGE = "记得喝水哦！保持身体水分充足对健康很重要。"  # 提醒内容
-   REMINDER_INTERVAL_HOURS = 2  # 提醒间隔（小时）
+   DRINK_REMINDER_MESSAGES = [
+     "记得喝水哦！保持身体水分充足对健康很重要。",
+     "水是生命之源，记得及时补充水分！",
+     # ... 更多消息
+   ]
    ```
 
 ### 3. 数据库迁移
@@ -44,7 +49,7 @@ python manage.py migrate
 
 ### 4. 启动应用
 
-需要启动两个进程：
+需要启动多个进程：
 
 1. 启动 Django 服务器：
    ```bash
@@ -132,4 +137,9 @@ brew services start redis
 
 ## 定时任务说明
 
-默认情况下，系统每 2 小时发送一次提醒（在每个小时的第 0 分钟）。你可以在 `drink_reminder/celery.py` 中修改定时规则。
+系统在以下时间段发送提醒：
+- 上午：9:00 - 11:50，随机间隔45-60分钟
+- 下午：14:00 - 17:30，随机间隔45-60分钟
+- 其他时间不发送提醒
+
+你可以在 `drink_reminder/celery.py` 中修改定时规则。
