@@ -1,13 +1,13 @@
-# 喝水提醒系统
+# 喝水提醒系统 (Server酱3版)
 
-这是一个基于 Django 和 Celery 的喝水提醒系统，会定时通过 Server酱 发送微信推送消息提醒用户喝水。
+这是一个基于 Django 和 Celery 的喝水提醒系统，会定时通过 Server酱3 发送微信推送消息提醒用户喝水。
 
 ## 功能特性
 
 - 每隔指定时间自动发送喝水提醒
 - 支持手动发送测试通知  
 - 系统状态监控页面
-- 使用 Server酱 进行消息推送
+- 使用 Server酱3 进行消息推送 (API: https://sc3.ft07.com/send/)
 - 多种随机提醒消息（从预设列表中随机选择）
 - 智能时间调度（上午9:00-11:50和下午14:00-17:30，随机间隔45-60分钟）
 
@@ -24,15 +24,15 @@ cd drink_reminder
 pip install -r requirements.txt
 ```
 
-### 2. 配置 Server酱
+### 2. 配置 Server酱3
 
-1. 获取 Server酱 SCKEY：
-   - 访问 [Server酱官网](https://sct.ftqq.com/)
-   - 扫码关注并获取 SCKEY
+1. 获取 Server酱3 SendKey：
+   - 访问 [Server酱3官网](https://sc3.ft07.com/)
+   - 扫码关注并获取 SendKey
 
 2. 编辑 `config.py` 文件：
    ```python
-   SERVER_CHAN_TOKEN = "YOUR_SCKEY_HERE"  # 替换为你的 SCKEY
+   SERVER_CHAN_TOKEN = "YOUR_SENDKEY_HERE"  # 替换为你的 SendKey
    DRINK_REMINDER_TITLE = "喝水提醒"      # 提醒标题
    DRINK_REMINDER_MESSAGES = [
      "记得喝水哦！保持身体水分充足对健康很重要。",
@@ -89,40 +89,52 @@ python manage.py send_drink_reminder
 ## 项目结构
 
 ```
-drink_reminder/          # 主项目目录
-├── config.py           # 配置文件
-├── deploy_and_run.sh   # 一键部署和启动脚本
-├── start_system.sh     # 日常启动脚本
-├── manage.py           # Django 管理脚本
-├── requirements.txt    # 依赖列表
-├── drink_reminder/     # Django 配置目录
+drink_reminder/                    # 主项目目录
+├── config.py                     # 配置文件
+├── deploy_and_run.sh             # 一键部署和启动脚本 (Server酱)
+├── deploy_and_run_serverchan3.sh # 一键部署和启动脚本 (Server酱3)
+├── setup_serverchan3.sh          # Server酱3快速设置脚本
+├── start_system.sh               # 日常启动脚本
+├── stop_system.sh                # 停止服务脚本
+├── manage.py                     # Django 管理脚本
+├── requirements.txt              # 依赖列表
+├── drink_reminder/               # Django 配置目录
 │   ├── __init__.py
 │   ├── settings.py
-│   ├── settings_prod.py # 生产环境设置
+│   ├── settings_prod.py           # 生产环境设置
 │   ├── urls.py
 │   └── wsgi.py
-└── reminder/           # 提醒功能应用
+└── reminder/                     # 提醒功能应用
     ├── __init__.py
     ├── admin.py
     ├── apps.py
     ├── models.py
-    ├── services.py     # Server酱 服务
-    ├── tasks.py        # Celery 任务
+    ├── services.py               # Server酱3 服务
+    ├── tasks.py                  # Celery 任务
     ├── views.py
     ├── urls.py
-    ├── templates/      # 模板文件
-    └── static/         # 静态文件
+    ├── templates/                # 模板文件
+    └── static/                   # 静态文件
 ```
 
 ## 快速部署和启动
 
-### 一键部署和启动（首次部署或完整更新）
+### 一键部署和启动（Server酱3版 - 推荐）
 
 ```bash
-# 从GitHub克隆并部署项目
-git clone git@github.com:chenzhiyan/drinkWater.git
-cd drinkWater
-./deploy_and_run.sh
+# 下载Server酱3快速设置脚本
+wget https://raw.githubusercontent.com/chenzhiyan/drinkWater/main/setup_serverchan3.sh
+chmod +x setup_serverchan3.sh
+./setup_serverchan3.sh
+```
+
+### 或使用部署脚本
+
+```bash
+# 下载Server酱3部署脚本
+wget https://raw.githubusercontent.com/chenzhiyan/drinkWater/main/deploy_and_run_serverchan3.sh
+chmod +x deploy_and_run_serverchan3.sh
+./deploy_and_run_serverchan3.sh
 ```
 
 ### 日常启动（部署后）
@@ -132,16 +144,29 @@ cd drinkWater
 ./start_system.sh
 ```
 
+### 停止服务
+
+```bash
+# 停止所有服务
+./stop_system.sh
+```
+
 ## 配置说明
 
-编辑 `config.py` 文件配置Server酱推送：
+编辑 `config.py` 文件配置Server酱3推送：
 
-1. `SERVER_CHAN_TOKEN`: Server酱的SCKEY
+1. `SERVER_CHAN_TOKEN`: Server酱3的SendKey
 2. `DRINK_REMINDER_MESSAGES`: 一个包含多条提醒消息的列表，系统会随机选择一条发送
 3. 智能时间调度：
    - 上午：9:00 - 11:50，随机间隔45-60分钟发送提醒
    - 下午：14:00 - 17:30，随机间隔45-60分钟发送提醒
    - 其他时间不发送提醒
+
+## Server酱3 API
+
+本项目使用 Server酱3 API: `https://sc3.ft07.com/send/{SENDKEY}`
+
+Server酱3是Server酱的升级版本，提供更稳定的推送服务。
 
 ## Redis 配置
 
