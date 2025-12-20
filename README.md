@@ -119,7 +119,16 @@ drink_reminder/                    # 主项目目录
 
 ## 快速部署和启动
 
-### 一键部署和启动（推荐）
+### 一键SSH服务器部署（推荐）
+
+```bash
+# 在SSH服务器上运行此命令进行完整部署：
+wget https://raw.githubusercontent.com/chenzhiyan/drinkWater/main/deploy_ssh_server.sh
+chmod +x deploy_ssh_server.sh
+./deploy_ssh_server.sh
+```
+
+### 本地开发环境部署
 
 ```bash
 # 方式1: 使用通用部署脚本
@@ -128,10 +137,10 @@ cd drinkWater
 ./deploy_and_run.sh
 ```
 
-### 或使用Server酱3兼容部署脚本
+### Server酱3兼容部署
 
 ```bash
-# 方式2: 下载Server酱3兼容设置脚本
+# 方式2: 使用Server酱3设置脚本
 wget https://raw.githubusercontent.com/chenzhiyan/drinkWater/main/setup_serverchan3.sh
 chmod +x setup_serverchan3.sh
 ./setup_serverchan3.sh
