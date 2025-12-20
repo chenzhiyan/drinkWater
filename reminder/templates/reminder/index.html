@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>喝水提醒系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .info-box {
+            background-color: #e8f4fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💧 喝水提醒系统</h1>
+        
+        <div class="info-box">
+            <h3>系统信息</h3>
+            <p>本系统会定期通过Server酱向您发送喝水提醒通知。</p>
+            <p>默认每2小时发送一次提醒，系统会从{{ total_messages }}条消息中随机选择一条发送，您也可以点击下方按钮立即发送测试通知。</p>
+        </div>
+        
+        <div class="controls">
+            <a href="{% url 'send_test_notification' %}">
+                <button type="button">发送测试通知</button>
+            </a>
+            <a href="{% url 'status' %}">
+                <button type="button">查看系统状态</button>
+            </a>
+        </div>
+        
+        <div class="info-box">
+            <h3>配置信息</h3>
+            <p>当前提醒间隔：每{{ interval }}小时</p>
+            <p>提醒标题：{{ title }}</p>
+            <p>提醒消息示例：{{ message }}</p>
+            <p>消息总数：{{ total_messages }}条</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发送测试通知 - 喝水提醒系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .notification-form {
+            text-align: center;
+            margin: 30px 0;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #219a52;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>发送测试通知</h1>
+        
+        <div class="notification-form">
+            <p>点击下方按钮发送一条测试喝水提醒通知：</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit">发送测试通知</button>
+            </form>
+        </div>
+        
+        <div class="back-link">
+            <a href="{% url 'index' %}">&larr; 返回首页</a>
+        </div>
+    </div>
+</body>
+</html>

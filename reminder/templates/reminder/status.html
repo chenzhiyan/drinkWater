@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统状态 - 喝水提醒系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .status-card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        .status-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .status-value {
+            color: #7f8c8d;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>系统状态</h1>
+        
+        <div class="status-card">
+            <div class="status-title">服务状态</div>
+            <div class="status-value">运行中</div>
+        </div>
+        
+        <div class="status-card">
+            <div class="status-title">下次提醒时间</div>
+            <div class="status-value">每2小时一次（整点后发送）</div>
+        </div>
+        
+        <div class="status-card">
+            <div class="status-title">Server酱配置</div>
+            <div class="status-value">{% if server_chan_configured %}已配置{% else %}未配置{% endif %}</div>
+        </div>
+        
+        <div class="status-card">
+            <div class="status-title">最近通知</div>
+            <div class="status-value">即将自动发送...</div>
+        </div>
+        
+        <div class="back-link">
+            <a href="{% url 'index' %}">&larr; 返回首页</a>
+        </div>
+    </div>
+</body>
+</html>
