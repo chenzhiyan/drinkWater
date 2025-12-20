@@ -1,13 +1,13 @@
-# 喝水提醒系统 (Server酱3版)
+# 喝水提醒系统
 
-这是一个基于 Django 和 Celery 的喝水提醒系统，会定时通过 Server酱3 发送微信推送消息提醒用户喝水。
+这是一个基于 Django 和 Celery 的喝水提醒系统，会定时通过 Server酱/Server酱3 发送微信推送消息提醒用户喝水。
 
 ## 功能特性
 
 - 每隔指定时间自动发送喝水提醒
 - 支持手动发送测试通知  
 - 系统状态监控页面
-- 使用 Server酱3 进行消息推送 (API: https://sc3.ft07.com/send/)
+- 兼容 Server酱 和 Server酱3 进行消息推送
 - 多种随机提醒消息（从预设列表中随机选择）
 - 智能时间调度（上午9:00-11:50和下午14:00-17:30，随机间隔45-60分钟）
 
@@ -24,15 +24,15 @@ cd drink_reminder
 pip install -r requirements.txt
 ```
 
-### 2. 配置 Server酱3
+### 2. 配置 Server酱/Server酱3
 
-1. 获取 Server酱3 SendKey：
-   - 访问 [Server酱3官网](https://sc3.ft07.com/)
-   - 扫码关注并获取 SendKey
+1. 获取 Server酱 或 Server酱3 密钥：
+   - Server酱：访问 [Server酱官网](https://sct.ftqq.com/)，获取 SCKEY
+   - Server酱3：访问 [Server酱3官网](https://sc3.ft07.com/)，获取 SendKey
 
 2. 编辑 `config.py` 文件：
    ```python
-   SERVER_CHAN_TOKEN = "YOUR_SENDKEY_HERE"  # 替换为你的 SendKey
+   SERVER_CHAN_TOKEN = "YOUR_KEY_HERE"  # 替换为你的 Server酱 SCKEY 或 Server酱3 SendKey
    DRINK_REMINDER_TITLE = "喝水提醒"      # 提醒标题
    DRINK_REMINDER_MESSAGES = [
      "记得喝水哦！保持身体水分充足对健康很重要。",
@@ -119,22 +119,22 @@ drink_reminder/                    # 主项目目录
 
 ## 快速部署和启动
 
-### 一键部署和启动（Server酱3版 - 推荐）
+### 一键部署和启动（推荐）
 
 ```bash
-# 下载Server酱3快速设置脚本
+# 方式1: 使用通用部署脚本
+git clone https://github.com/chenzhiyan/drinkWater.git
+cd drinkWater
+./deploy_and_run.sh
+```
+
+### 或使用Server酱3兼容部署脚本
+
+```bash
+# 方式2: 下载Server酱3兼容设置脚本
 wget https://raw.githubusercontent.com/chenzhiyan/drinkWater/main/setup_serverchan3.sh
 chmod +x setup_serverchan3.sh
 ./setup_serverchan3.sh
-```
-
-### 或使用部署脚本
-
-```bash
-# 下载Server酱3部署脚本
-wget https://raw.githubusercontent.com/chenzhiyan/drinkWater/main/deploy_and_run_serverchan3.sh
-chmod +x deploy_and_run_serverchan3.sh
-./deploy_and_run_serverchan3.sh
 ```
 
 ### 日常启动（部署后）
@@ -153,20 +153,23 @@ chmod +x deploy_and_run_serverchan3.sh
 
 ## 配置说明
 
-编辑 `config.py` 文件配置Server酱3推送：
+编辑 `config.py` 文件配置推送服务：
 
-1. `SERVER_CHAN_TOKEN`: Server酱3的SendKey
+1. `SERVER_CHAN_TOKEN`: Server酱的SCKEY或Server酱3的SendKey
 2. `DRINK_REMINDER_MESSAGES`: 一个包含多条提醒消息的列表，系统会随机选择一条发送
 3. 智能时间调度：
    - 上午：9:00 - 11:50，随机间隔45-60分钟发送提醒
    - 下午：14:00 - 17:30，随机间隔45-60分钟发送提醒
    - 其他时间不发送提醒
 
-## Server酱3 API
+## API兼容性
 
-本项目使用 Server酱3 API: `https://sc3.ft07.com/send/{SENDKEY}`
+本项目支持多种推送服务API：
 
-Server酱3是Server酱的升级版本，提供更稳定的推送服务。
+1. **Server酱** (sct.ftqq.com): 使用 `sctapi.ftqq.com` 端点
+2. **Server酱3** (sc3.ft07.com): 使用 `sc3.ft07.com` 端点
+
+系统会自动检测并使用正确的API端点。
 
 ## Redis 配置
 
