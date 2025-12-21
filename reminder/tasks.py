@@ -28,11 +28,11 @@ def send_drink_reminder_task():
 @shared_task
 def send_smart_drink_reminder_task():
     """
-    Smart drink reminder task that sends reminders based on time periods with random intervals
-    TESTING MODE: Random interval 1-3 mins (until 15:30)
+    Smart drink reminder task that sends reminders based on time periods with fixed intervals
+    TESTING MODE: Fixed 2-minute interval (until 15:30)
     Morning period: 9:00 - 11:50
     Afternoon period: 14:00 - 17:30
-    TODO: Revert to 45-60 mins after testing
+    TODO: Revert to 45-60 mins random after testing
     """
     try:
         # Connect to Redis to store timing information
@@ -56,8 +56,8 @@ def send_smart_drink_reminder_task():
             last_notification_str = redis_client.get('drink_reminder:last_morning_notification')
             last_notification = float(last_notification_str) if last_notification_str else 0
 
-            # TESTING: Random interval between 1-3 minutes (in seconds)
-            random_interval = random.randint(1*60, 3*60)
+            # TESTING: Fixed 2-minute interval for predictable testing
+            random_interval = 2*60  # 120 seconds
 
             if current_timestamp - last_notification >= random_interval:
                 should_send = True
@@ -70,8 +70,8 @@ def send_smart_drink_reminder_task():
             last_notification_str = redis_client.get('drink_reminder:last_afternoon_notification')
             last_notification = float(last_notification_str) if last_notification_str else 0
 
-            # TESTING: Random interval between 1-3 minutes (in seconds)
-            random_interval = random.randint(1*60, 3*60)
+            # TESTING: Fixed 2-minute interval for predictable testing
+            random_interval = 2*60  # 120 seconds
 
             if current_timestamp - last_notification >= random_interval:
                 should_send = True
