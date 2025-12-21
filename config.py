@@ -1,7 +1,8 @@
 # Configuration file for drink reminder app
 
 # Server酱 configuration
-SERVER_CHAN_TOKEN = "sctp14152tndmmd3xysbo35fsgm3myec"  # Server酱 SCKEY
+SERVER_CHAN_TOKEN = "sctp14152tndmmd3xysbo35fsgm3myec"  # Server酱 SCKEY (主账号)
+SERVER_CHAN_TOKEN_2 = "sctp14166tryr1kcfxup5uxt7iquxfs8"  # Server酱 SCKEY (第二账号)
 DRINK_REMINDER_TITLE = "喝水提醒"
 
 # List of drink reminder messages - system will randomly select one each time

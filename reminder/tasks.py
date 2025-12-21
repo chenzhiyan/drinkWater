@@ -2,9 +2,16 @@ from celery import shared_task
 from reminder.services import send_drink_reminder
 import logging
 import random
-from datetime import datetime
+from datetime import datetime, date
 import time
 import redis
+try:
+    from chinese_calendar import is_workday
+except ImportError:
+    # Fallback if chinese_calendar is not installed
+    def is_workday(day):
+        # Simple fallback: weekdays only (no holiday detection)
+        return day.weekday() < 5
 
 logger = logging.getLogger(__name__)
 
@@ -28,13 +35,18 @@ def send_drink_reminder_task():
 @shared_task
 def send_smart_drink_reminder_task():
     """
-    Smart drink reminder task that sends reminders based on time periods with fixed intervals
-    TESTING MODE: Fixed 2-minute interval (until 15:30)
+    Smart drink reminder task that sends reminders based on time periods with random intervals
+    Production: Random interval 45-60 mins, only on China workdays
     Morning period: 9:00 - 11:50
     Afternoon period: 14:00 - 17:30
-    TODO: Revert to 45-60 mins random after testing
     """
     try:
+        # Check if today is a workday in China
+        today = date.today()
+        if not is_workday(today):
+            logger.info(f"Skipping drink reminder - today ({today}) is not a workday in China")
+            return {"status": "skipped", "message": "Not a workday"}
+        
         # Connect to Redis to store timing information
         redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
         
@@ -56,8 +68,8 @@ def send_smart_drink_reminder_task():
             last_notification_str = redis_client.get('drink_reminder:last_morning_notification')
             last_notification = float(last_notification_str) if last_notification_str else 0
 
-            # TESTING: Fixed 2-minute interval for predictable testing
-            random_interval = 2*60  # 120 seconds
+            # Production: Random interval between 45-60 minutes (in seconds)
+            random_interval = random.randint(45*60, 60*60)
 
             if current_timestamp - last_notification >= random_interval:
                 should_send = True
@@ -70,8 +82,8 @@ def send_smart_drink_reminder_task():
             last_notification_str = redis_client.get('drink_reminder:last_afternoon_notification')
             last_notification = float(last_notification_str) if last_notification_str else 0
 
-            # TESTING: Fixed 2-minute interval for predictable testing
-            random_interval = 2*60  # 120 seconds
+            # Production: Random interval between 45-60 minutes (in seconds)
+            random_interval = random.randint(45*60, 60*60)
 
             if current_timestamp - last_notification >= random_interval:
                 should_send = True

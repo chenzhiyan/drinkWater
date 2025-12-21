@@ -2,7 +2,7 @@ import requests
 import logging
 import random
 from django.conf import settings
-from config import SERVER_CHAN_TOKEN, DRINK_REMINDER_TITLE, DRINK_REMINDER_MESSAGES
+from config import SERVER_CHAN_TOKEN, SERVER_CHAN_TOKEN_2, DRINK_REMINDER_TITLE, DRINK_REMINDER_MESSAGES
 
 logger = logging.getLogger(__name__)
 
@@ -84,10 +84,96 @@ def send_server_chan_notification(title=None, message=None):
 def send_drink_reminder():
     """
     Send a drink water reminder using configured settings
+    Sends to both Server酱 accounts if second token is configured
     """
     # Randomly select a message from the list
     random_message = random.choice(DRINK_REMINDER_MESSAGES)
-    return send_server_chan_notification(
+    
+    # Send to first account
+    result1 = send_server_chan_notification(
         title=DRINK_REMINDER_TITLE,
         message=random_message
     )
+    
+    # Send to second account if token is configured
+    if SERVER_CHAN_TOKEN_2 and SERVER_CHAN_TOKEN_2.strip():
+        result2 = send_server_chan_notification_with_token(
+            token=SERVER_CHAN_TOKEN_2,
+            title=DRINK_REMINDER_TITLE,
+            message=random_message
+        )
+        # Return success if at least one succeeded
+        if result1['success'] or result2['success']:
+            return {"success": True, "result": f"Account1: {result1['success']}, Account2: {result2['success']}"}
+        else:
+            return {"success": False, "error": f"Both failed. Account1: {result1.get('error')}, Account2: {result2.get('error')}"}
+    
+    return result1
+
+def send_server_chan_notification_with_token(token, title=None, message=None):
+    """
+    Send notification via ServerChan3 with specified token
+    
+    Args:
+        token (str): Server酱 token to use
+        title (str): Notification title
+        message (str): Notification message
+    
+    Returns:
+        dict: Response from ServerChan API
+    """
+    if not token:
+        logger.error("ServerChan token is not provided")
+        return {"success": False, "error": "ServerChan token not provided"}
+    
+    # Use default values if not provided
+    title = title or DRINK_REMINDER_TITLE
+    message = message or random.choice(DRINK_REMINDER_MESSAGES)
+    
+    url = f"https://sc3.ft07.com/send/{token}"
+    
+    payload = {
+        'title': title,
+        'desp': message
+    }
+    
+    try:
+        response = requests.post(url, data=payload)
+        response.raise_for_status()
+        
+        result = response.json()
+        logger.info(f"ServerChan3 notification sent (token: {token[:10]}...): {result}")
+        
+        if ('code' in result and result['code'] == 0) or 'success' in str(result).lower():
+            return {"success": True, "result": result}
+        else:
+            logger.error(f"ServerChan3 notification failed: {result}")
+            return {"success": False, "error": result}
+            
+    except requests.exceptions.RequestException as e:
+        if "405" in str(e):
+            logger.warning("Received 405 error, trying alternative Server酱3 API format...")
+            url = f"https://sctapi.ftqq.com/{token}.send"
+            
+            try:
+                response = requests.post(url, data=payload)
+                response.raise_for_status()
+                
+                result = response.json()
+                logger.info(f"Original Server酱 API notification sent: {result}")
+                
+                if result.get('data'):
+                    return {"success": True, "result": result}
+                else:
+                    logger.error(f"Original Server酱 API notification failed: {result}")
+                    return {"success": False, "error": result}
+            except Exception as e2:
+                logger.error(f"Both Server酱3 and original Server酱 APIs failed: {str(e2)}")
+                return {"success": False, "error": f"Main API: {str(e)}, Fallback API: {str(e2)}"}
+        else:
+            logger.error(f"Error sending ServerChan3 notification: {str(e)}")
+            return {"success": False, "error": str(e)}
+    
+    except ValueError as e:
+        logger.error(f"Error parsing ServerChan3 response: {str(e)}")
+        return {"success": False, "error": str(e)}

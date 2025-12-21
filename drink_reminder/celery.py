@@ -18,18 +18,18 @@ app.autodiscover_tasks()
 # Configure periodic tasks (Celery Beat)
 from celery.schedules import crontab
 
-# TESTING MODE: Check every 1 minute, send every 1-3 minutes (until 15:30)
-# TODO: Revert to production config after testing
+# Production: Check every 10 minutes during allowed periods
+# The task will decide whether to send based on random 45-60 min intervals
 app.conf.beat_schedule = {
-    # Morning period: 9:00 - 11:50, check every 1 minute
+    # Morning period: 9:00 - 11:50, check every 10 minutes
     'morning-check-9-11': {
         'task': 'reminder.tasks.send_smart_drink_reminder_task',
-        'schedule': crontab(minute='*/1', hour='9-11'),
+        'schedule': crontab(minute='*/10', hour='9-11'),
     },
-    # Afternoon period: 14:00 - 17:30, check every 1 minute
+    # Afternoon period: 14:00 - 17:30, check every 10 minutes
     'afternoon-check-14-17': {
         'task': 'reminder.tasks.send_smart_drink_reminder_task',
-        'schedule': crontab(minute='*/1', hour='14-17'),
+        'schedule': crontab(minute='*/10', hour='14-17'),
     },
 }
 
