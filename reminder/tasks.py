@@ -29,8 +29,10 @@ def send_drink_reminder_task():
 def send_smart_drink_reminder_task():
     """
     Smart drink reminder task that sends reminders based on time periods with random intervals
-    Morning period: 9:00 - 11:50 (random interval 45-60 mins)
-    Afternoon period: 14:00 - 17:30 (random interval 45-60 mins)
+    TESTING MODE: Random interval 1-3 mins (until 15:30)
+    Morning period: 9:00 - 11:50
+    Afternoon period: 14:00 - 17:30
+    TODO: Revert to 45-60 mins after testing
     """
     try:
         # Connect to Redis to store timing information
