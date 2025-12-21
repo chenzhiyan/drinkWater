@@ -21,35 +21,10 @@ from celery.schedules import crontab
 # For true random interval scheduling, we'll run a task every 10 minutes during allowed periods
 # and have the task decide whether to send a notification based on random intervals
 app.conf.beat_schedule = {
-    # Morning period: every 10 minutes from 9:00 to 12:00 (but only send based on 45-60 min intervals)
-    'morning-check-900': {
+    # Test period: every 5 minutes from 12:00 to 13:00 (but only send based on 5-10 min intervals)
+    'lunch-check-1200': {
         'task': 'reminder.tasks.send_smart_drink_reminder_task',
-        'schedule': crontab(minute='*/10', hour='9'),
-    },
-    'morning-check-1000': {
-        'task': 'reminder.tasks.send_smart_drink_reminder_task',
-        'schedule': crontab(minute='*/10', hour='10'),
-    },
-    'morning-check-1100': {
-        'task': 'reminder.tasks.send_smart_drink_reminder_task',
-        'schedule': crontab(minute='*/10', hour='11'),
-    },
-    # Afternoon period: every 10 minutes from 14:00 (2PM) to 17:30 (5:30PM)
-    'afternoon-check-1400': {
-        'task': 'reminder.tasks.send_smart_drink_reminder_task',
-        'schedule': crontab(minute='*/10', hour='14'),
-    },
-    'afternoon-check-1500': {
-        'task': 'reminder.tasks.send_smart_drink_reminder_task',
-        'schedule': crontab(minute='*/10', hour='15'),
-    },
-    'afternoon-check-1600': {
-        'task': 'reminder.tasks.send_smart_drink_reminder_task',
-        'schedule': crontab(minute='*/10', hour='16'),
-    },
-    'afternoon-check-1700': {
-        'task': 'reminder.tasks.send_smart_drink_reminder_task',
-        'schedule': crontab(minute='0,10,20,30', hour='17'),  # Only first 30 minutes of 5PM
+        'schedule': crontab(minute='*/5', hour='12'),
     },
 }
 

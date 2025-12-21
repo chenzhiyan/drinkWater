@@ -29,8 +29,7 @@ def send_drink_reminder_task():
 def send_smart_drink_reminder_task():
     """
     Smart drink reminder task that sends reminders based on time periods with random intervals
-    Morning: 9:00 - 11:50 (random interval 45-60 mins)
-    Afternoon: 14:00 - 17:30 (random interval 45-60 mins)
+    Test period: 12:00 - 13:00 (random interval 5-10 mins)
     """
     try:
         # Connect to Redis to store timing information
@@ -40,38 +39,24 @@ def send_smart_drink_reminder_task():
         current_hour = current_time.hour
         current_minute = current_time.minute
         current_timestamp = time.time()
-        
+
         # Check if current time is in the allowed periods
-        is_morning_period = (current_hour == 9) or (current_hour == 10) or (current_hour == 11 and current_minute <= 50)
-        is_afternoon_period = (current_hour == 14) or (current_hour == 15) or (current_hour == 16) or (current_hour == 17 and current_minute <= 30)
-        
+        is_test_period = (current_hour == 12)  # 12:00-12:59
+
         should_send = False
-        
-        if is_morning_period:
-            # Get last morning notification time from Redis
-            last_morning_str = redis_client.get('drink_reminder:last_morning_notification')
-            last_morning_notification = float(last_morning_str) if last_morning_str else 0
-            
-            # Random interval between 45-60 minutes (in seconds)
-            random_interval_morning = random.randint(45*60, 60*60)
-            
-            if current_timestamp - last_morning_notification >= random_interval_morning:
+
+        if is_test_period:
+            # Get last test notification time from Redis
+            last_test_str = redis_client.get('drink_reminder:last_test_notification')
+            last_test_notification = float(last_test_str) if last_test_str else 0
+
+            # Random interval between 5-10 minutes (in seconds)
+            random_interval_test = random.randint(5*60, 10*60)
+
+            if current_timestamp - last_test_notification >= random_interval_test:
                 should_send = True
                 # Update the last notification time in Redis
-                redis_client.set('drink_reminder:last_morning_notification', str(current_timestamp))
-                
-        elif is_afternoon_period:
-            # Get last afternoon notification time from Redis
-            last_afternoon_str = redis_client.get('drink_reminder:last_afternoon_notification')
-            last_afternoon_notification = float(last_afternoon_str) if last_afternoon_str else 0
-            
-            # Random interval between 45-60 minutes (in seconds)
-            random_interval_afternoon = random.randint(45*60, 60*60)
-            
-            if current_timestamp - last_afternoon_notification >= random_interval_afternoon:
-                should_send = True
-                # Update the last notification time in Redis
-                redis_client.set('drink_reminder:last_afternoon_notification', str(current_timestamp))
+                redis_client.set('drink_reminder:last_test_notification', str(current_timestamp))
         
         if should_send:
             result = send_drink_reminder()
@@ -83,7 +68,7 @@ def send_smart_drink_reminder_task():
                 return {"status": "failed", "error": result['error']}
         else:
             # Check if we should send just based on time window but not enough time passed
-            if is_morning_period or is_afternoon_period:
+            if is_test_period:
                 logger.info(f"Smart drink reminder check - within time window but not enough time passed since last reminder")
                 return {"status": "check_passed", "message": f"Within time window, waiting for random interval"}
             else:
