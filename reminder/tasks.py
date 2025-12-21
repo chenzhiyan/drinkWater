@@ -56,8 +56,8 @@ def send_smart_drink_reminder_task():
             last_notification_str = redis_client.get('drink_reminder:last_morning_notification')
             last_notification = float(last_notification_str) if last_notification_str else 0
 
-            # Random interval between 45-60 minutes (in seconds)
-            random_interval = random.randint(45*60, 60*60)
+            # TESTING: Random interval between 1-3 minutes (in seconds)
+            random_interval = random.randint(1*60, 3*60)
 
             if current_timestamp - last_notification >= random_interval:
                 should_send = True
@@ -70,8 +70,8 @@ def send_smart_drink_reminder_task():
             last_notification_str = redis_client.get('drink_reminder:last_afternoon_notification')
             last_notification = float(last_notification_str) if last_notification_str else 0
 
-            # Random interval between 45-60 minutes (in seconds)
-            random_interval = random.randint(45*60, 60*60)
+            # TESTING: Random interval between 1-3 minutes (in seconds)
+            random_interval = random.randint(1*60, 3*60)
 
             if current_timestamp - last_notification >= random_interval:
                 should_send = True
