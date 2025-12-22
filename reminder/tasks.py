@@ -68,13 +68,20 @@ def send_smart_drink_reminder_task():
             last_notification_str = redis_client.get('drink_reminder:last_morning_notification')
             last_notification = float(last_notification_str) if last_notification_str else 0
 
-            # Production: Random interval between 45-60 minutes (in seconds)
-            random_interval = random.randint(45*60, 60*60)
+            # Get the next scheduled push time (stored after last push)
+            next_push_str = redis_client.get('drink_reminder:next_morning_push')
+            next_push_time = float(next_push_str) if next_push_str else 0
 
-            if current_timestamp - last_notification >= random_interval:
+            # Check if it's time to send
+            if current_timestamp >= next_push_time or next_push_time == 0:
                 should_send = True
                 # Update the last notification time in Redis
                 redis_client.set('drink_reminder:last_morning_notification', str(current_timestamp))
+                # Calculate and store next push time (45-60 minutes from now)
+                random_interval = random.randint(45*60, 60*60)
+                next_push = current_timestamp + random_interval
+                redis_client.set('drink_reminder:next_morning_push', str(next_push))
+                logger.info(f"Next morning push scheduled in {random_interval//60} minutes (at {datetime.fromtimestamp(next_push).strftime('%H:%M')})")
         
         elif is_afternoon_period:
             period_name = 'afternoon'
@@ -82,13 +89,20 @@ def send_smart_drink_reminder_task():
             last_notification_str = redis_client.get('drink_reminder:last_afternoon_notification')
             last_notification = float(last_notification_str) if last_notification_str else 0
 
-            # Production: Random interval between 45-60 minutes (in seconds)
-            random_interval = random.randint(45*60, 60*60)
+            # Get the next scheduled push time (stored after last push)
+            next_push_str = redis_client.get('drink_reminder:next_afternoon_push')
+            next_push_time = float(next_push_str) if next_push_str else 0
 
-            if current_timestamp - last_notification >= random_interval:
+            # Check if it's time to send
+            if current_timestamp >= next_push_time or next_push_time == 0:
                 should_send = True
                 # Update the last notification time in Redis
                 redis_client.set('drink_reminder:last_afternoon_notification', str(current_timestamp))
+                # Calculate and store next push time (45-60 minutes from now)
+                random_interval = random.randint(45*60, 60*60)
+                next_push = current_timestamp + random_interval
+                redis_client.set('drink_reminder:next_afternoon_push', str(next_push))
+                logger.info(f"Next afternoon push scheduled in {random_interval//60} minutes (at {datetime.fromtimestamp(next_push).strftime('%H:%M')})")
         
         if should_send:
             result = send_drink_reminder()
