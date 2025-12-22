@@ -21,15 +21,15 @@ from celery.schedules import crontab
 # Production: Check every 10 minutes during allowed periods
 # The task will decide whether to send based on random 45-60 min intervals
 app.conf.beat_schedule = {
-    # Morning period: 9:00 - 11:50, check every 10 minutes
+    # Morning period: 9:00 - 11:50, check every 2 minutes
     'morning-check-9-11': {
         'task': 'reminder.tasks.send_smart_drink_reminder_task',
-        'schedule': crontab(minute='*/10', hour='9-11'),
+        'schedule': crontab(minute='*/2', hour='9-11'),
     },
-    # Afternoon period: 14:00 - 17:30, check every 10 minutes
+    # Afternoon period: 14:00 - 17:30, check every 2 minutes
     'afternoon-check-14-17': {
         'task': 'reminder.tasks.send_smart_drink_reminder_task',
-        'schedule': crontab(minute='*/10', hour='14-17'),
+        'schedule': crontab(minute='*/2', hour='14-17'),
     },
 }
 
