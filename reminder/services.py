@@ -30,7 +30,7 @@ def send_server_chan_notification(title=None, message=None):
     # Based on the user's URL format: https://sc3.ft07.com/sendkey
     # Correct format is likely: https://sc3.ft07.com/send/{key}
     
-    url = f"https://sc3.ft07.com/send/{SERVER_CHAN_TOKEN}"
+    url = f"https://sctapi.ftqq.com/{SERVER_CHAN_TOKEN}.send"
     
     payload = {
         'title': title,
@@ -130,7 +130,7 @@ def send_server_chan_notification_with_token(token, title=None, message=None):
     title = title or DRINK_REMINDER_TITLE
     message = message or random.choice(DRINK_REMINDER_MESSAGES)
     
-    url = f"https://sc3.ft07.com/send/{token}"
+    url = f"https://sctapi.ftqq.com/{token}.send"
     
     payload = {
         'title': title,
