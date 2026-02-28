@@ -33,9 +33,9 @@ except ImportError:
 LOG_FILE = '/root/data/drinkWater/reminder.log'
 STATE_FILE = '/root/data/drinkWater/reminder_state.json'
 
-# Random interval range
-MIN_INTERVAL = 45 * 60  # 45 minutes in seconds
-MAX_INTERVAL = 60 * 60  # 60 minutes in seconds
+# Random interval range (in seconds)
+MIN_INTERVAL = 45 * 60  # 45 minutes
+MAX_INTERVAL = 60 * 60  # 60 minutes
 
 def log(message):
     """Write log message"""
@@ -82,6 +82,15 @@ def send_notification(token, title, message):
     except Exception as e:
         return False, str(e)
 
+def format_interval(seconds):
+    """Format interval seconds to human readable string"""
+    mins = seconds // 60
+    secs = seconds % 60
+    if secs == 0:
+        return f"{mins}分钟"
+    else:
+        return f"{mins}分{secs}秒"
+
 def main():
     current_time = datetime.now()
     current_hour = current_time.hour
@@ -124,7 +133,7 @@ def main():
     # Check if it's time to send
     if current_timestamp < next_send:
         remaining = int(next_send - current_timestamp)
-        log(f"Skipped - waiting for random interval ({remaining // 60} mins remaining)")
+        log(f"Skipped - waiting ({format_interval(remaining)} remaining)")
         return
     
     # Send reminder
@@ -141,7 +150,7 @@ def main():
         success2, result2 = send_notification(SERVER_CHAN_TOKEN_2, DRINK_REMINDER_TITLE, message)
         log(f"Account 2: {'success' if success2 else 'failed'} - {result2}")
     
-    # Calculate next random interval (45-60 minutes)
+    # Calculate next random interval (45-60 minutes, precise to second)
     random_interval = random.randint(MIN_INTERVAL, MAX_INTERVAL)
     next_send_time = current_timestamp + random_interval
     
@@ -149,8 +158,8 @@ def main():
     state[state_key] = next_send_time
     save_state(state)
     
-    next_time_str = datetime.fromtimestamp(next_send_time).strftime('%H:%M')
-    log(f"Next reminder scheduled in {random_interval // 60} mins (at {next_time_str})")
+    next_time_str = datetime.fromtimestamp(next_send_time).strftime('%H:%M:%S')
+    log(f"Next reminder in {format_interval(random_interval)} (at {next_time_str})")
     log(f"=== Reminder completed ===")
 
 if __name__ == '__main__':
