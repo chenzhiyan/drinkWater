@@ -211,3 +211,23 @@ brew services start redis
 - 其他时间不发送提醒
 
 你可以在 `drink_reminder/celery.py` 中修改定时规则。
+
+### Cron 生产定时任务
+
+当前线上推荐使用 root crontab 每分钟唤起 `simple_reminder.py`，脚本内部会根据工作时间和随机间隔决定是否真正推送。
+
+恢复或安装生产环境定时任务：
+
+```bash
+cd /root/data/drinkWater
+./deploy/install_cron.sh
+```
+
+安装后的 crontab 规则：
+
+```cron
+# BEGIN drinkWater cron
+* 9-11 * * * /root/data/drinkWater/venv/bin/python3 /root/data/drinkWater/simple_reminder.py >> /root/data/drinkWater/cron.log 2>&1
+* 14-17 * * * /root/data/drinkWater/venv/bin/python3 /root/data/drinkWater/simple_reminder.py >> /root/data/drinkWater/cron.log 2>&1
+# END drinkWater cron
+```
